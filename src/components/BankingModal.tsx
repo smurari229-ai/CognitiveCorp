@@ -120,12 +120,12 @@ export const BankingModal: React.FC = () => {
             </div>
             <div>
               <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <span>{isHindi ? 'सुरक्षित भुगतान गेटवे व बैंक प्रणाली' : 'Secure Enterprise Banking Gateway'}</span>
+                <span>{isHindi ? 'ट्रेज़री डेमो (असली भुगतान जुड़ा नहीं है)' : 'Treasury Demo (No Live Payments Connected)'}</span>
               </h2>
               <p className="text-xs text-slate-400">
                 {isHindi 
-                  ? 'बैंक ट्रांसफर, यूपीआई, डिजिटल वॉलेट और क्रिप्टोकरेंसी को समर्थित' 
-                  : 'Automated 256-bit encrypted treasury clearinghouse'}
+                  ? 'यह स्क्रीन केवल नमूना डेटा दिखाती है; असली पैसा ट्रांसफर नहीं होता।' 
+                  : 'Demo only: this screen does not transfer real money.'}
               </p>
             </div>
           </div>
@@ -170,7 +170,7 @@ export const BankingModal: React.FC = () => {
         {/* Vault balance snapshot */}
         <div className="px-6 py-3 bg-slate-950/60 border-b border-slate-800/80 flex items-center justify-between text-xs">
           <span className="text-slate-400">
-            {isHindi ? 'वर्तमान उपलब्ध ट्रेज़री बैलेंस:' : 'Current Available Vault Balance:'}
+            {isHindi ? 'नमूना बैलेंस (असली पैसा नहीं):' : 'Simulated demo balance (not real funds):'}
           </span>
           <span className="font-mono text-base font-bold text-emerald-400">
             ${vault.balance.toLocaleString()}
@@ -205,7 +205,7 @@ export const BankingModal: React.FC = () => {
               onClick={() => switchRole('owner')}
               className="mt-2 px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-colors"
             >
-              {isHindi ? '1-क्लिक में सुप्रीम ऑनर (Owner) बनें' : 'Switch to Supreme Owner (1-Click)'}
+              {isHindi ? 'डेमो रोल बदलें' : 'Switch demo role'}
             </button>
           </div>
         )}
