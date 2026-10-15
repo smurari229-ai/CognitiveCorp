@@ -1,0 +1,6 @@
+{
+  "name": "CognitiveCorp - Autonomous AI Enterprise & Banking Ecosystem",
+  "description": "An autonomous AI-operated enterprise where AI departments (CEO, HR, Manager, Workers, Security Guard) self-operate, earn business revenue, manage automated clients, invoices, bank transfers, and real-time analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
