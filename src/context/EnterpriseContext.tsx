@@ -163,10 +163,10 @@ export const EnterpriseProvider: React.FC<{ children: ReactNode }> = ({ children
   // Load saved state or default
   const [userSession, setUserSession] = useState<UserSession>(() => {
     return {
-      isLoggedIn: true,
-      name: 'Sahil Murari (Supreme Owner)',
-      email: 'owner@cognitivecorp.ai',
-      role: 'owner',
+      isLoggedIn: false,
+      name: 'Guest Observer',
+      email: '',
+      role: 'worker',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
       loginTime: Date.now(),
     };
@@ -181,7 +181,7 @@ export const EnterpriseProvider: React.FC<{ children: ReactNode }> = ({ children
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>(INITIAL_AUDIT_LOGS);
   const [vault, setVault] = useState<CompanyVault>(INITIAL_VAULT);
 
-  const [isAutonomousRunning, setIsAutonomousRunning] = useState<boolean>(true);
+  const [isAutonomousRunning, setIsAutonomousRunning] = useState<boolean>(false);
   const [simulationSpeed, setSimulationSpeed] = useState<number>(1);
   const [language, setLanguage] = useState<'en' | 'hi'>('hi');
   const [notifications, setNotifications] = useState<EnterpriseNotification[]>([]);
@@ -285,136 +285,25 @@ export const EnterpriseProvider: React.FC<{ children: ReactNode }> = ({ children
     });
   };
 
-  // Banking: Deposit
+  // Live money movement is intentionally disabled until a verified server-side
+  // payment/payout provider and authenticated backend are configured.
   const depositFunds = (
-    amount: number, 
-    method: PaymentMethodType, 
-    details: { accountOrId: string; senderName: string; notes?: string }
-  ) => {
-    if (!currentRolePermission.canDeposit) {
-      return { success: false, message: 'Current role permissions do not permit capital deposit.' };
-    }
-    if (amount <= 0 || isNaN(amount)) {
-      return { success: false, message: 'Invalid deposit amount.' };
-    }
+    _amount: number,
+    _method: PaymentMethodType,
+    _details: { accountOrId: string; senderName: string; notes?: string }
+  ) => ({
+    success: false,
+    message: 'Live deposits are disabled: no verified payment provider is connected. No funds were moved.',
+  });
 
-    const refNum = method === 'bank_wire' 
-      ? 'WIRE-' + Math.floor(10000000 + Math.random() * 90000000)
-      : method === 'upi_wallet' 
-      ? 'UPI-' + Math.floor(1000000000 + Math.random() * 9000000000)
-      : 'TX-' + Math.random().toString(36).substring(2, 10).toUpperCase();
-
-    const newTx: Transaction = {
-      id: 'TXN-' + Math.floor(10000 + Math.random() * 90000),
-      timestamp: Date.now(),
-      type: 'deposit',
-      amount,
-      category: 'Capital Inflow / Top-Up',
-      status: 'completed',
-      paymentMethod: method,
-      referenceNumber: refNum,
-      sender: `${details.senderName} (${details.accountOrId})`,
-      recipient: 'CognitiveCorp Enterprise Treasury Vault',
-      notes: details.notes || 'Automated capital injection approved by Sentinel Security Enclave.',
-      verifiedBySecurity: true,
-      department: 'treasury',
-    };
-
-    setVault(prev => ({
-      ...prev,
-      balance: prev.balance + amount,
-      totalDeposited: prev.totalDeposited + amount,
-    }));
-
-    setTransactions(prev => [newTx, ...prev]);
-    recordAudit('TREASURY_DEPOSIT_COMPLETED', 'Treasury', `Deposited $${amount.toLocaleString()} via ${method} [Ref: ${refNum}]`);
-
-    addNotification({
-      type: 'success',
-      title: 'Deposit Successful',
-      hindiTitle: 'जमा (Deposit) सफल रहा',
-      message: `$${amount.toLocaleString()} has been safely credited to Company Vault via ${method}.`,
-    });
-
-    try {
-      sounds.playCash();
-      confetti({ particleCount: 40, spread: 60, origin: { y: 0.8 } });
-    } catch {
-      // ignore
-    }
-
-    return { success: true, message: `Successfully deposited $${amount.toLocaleString()}` };
-  };
-
-  // Banking: Withdrawal
   const withdrawFunds = (
-    amount: number, 
-    method: PaymentMethodType, 
-    details: { accountOrId: string; recipientName: string; otpPin: string }
-  ) => {
-    if (!currentRolePermission.canWithdraw) {
-      return { 
-        success: false, 
-        message: 'Access Denied: Only Supreme Owner clearance is authorized to withdraw corporate profits.' 
-      };
-    }
-    if (amount <= 0 || isNaN(amount)) {
-      return { success: false, message: 'Invalid withdrawal amount.' };
-    }
-    if (amount > vault.balance) {
-      return { success: false, message: `Insufficient Vault balance! Available liquid: $${vault.balance.toLocaleString()}` };
-    }
-    if (details.otpPin !== '2026' && details.otpPin.length < 4) {
-      return { success: false, message: 'Security Check Failed: Please enter 4-digit OTP/PIN (Try: 2026).' };
-    }
-
-    const refNum = method === 'bank_wire' 
-      ? 'SWIFT-OUT-' + Math.floor(10000000 + Math.random() * 90000000)
-      : method === 'upi_wallet' 
-      ? 'UPI-PAYOUT-' + Math.floor(1000000000 + Math.random() * 9000000000)
-      : 'PAYOUT-' + Math.random().toString(36).substring(2, 10).toUpperCase();
-
-    const newTx: Transaction = {
-      id: 'TXN-' + Math.floor(10000 + Math.random() * 90000),
-      timestamp: Date.now(),
-      type: 'withdrawal',
-      amount,
-      category: 'Owner Profit Payout',
-      status: 'completed',
-      paymentMethod: method,
-      referenceNumber: refNum,
-      sender: 'CognitiveCorp Enterprise Treasury Vault',
-      recipient: `${details.recipientName} (${details.accountOrId})`,
-      notes: `Direct profit distribution dispatched to owner via ${method}. Verified with 2FA token.`,
-      verifiedBySecurity: true,
-      department: 'treasury',
-    };
-
-    setVault(prev => ({
-      ...prev,
-      balance: prev.balance - amount,
-      totalWithdrawn: prev.totalWithdrawn + amount,
-    }));
-
-    setTransactions(prev => [newTx, ...prev]);
-    recordAudit('TREASURY_WITHDRAWAL_DISPATCHED', 'Treasury', `Owner withdrew $${amount.toLocaleString()} to ${details.recipientName} via ${method}`);
-
-    addNotification({
-      type: 'success',
-      title: 'Withdrawal Dispatched!',
-      hindiTitle: 'निकासी (Withdrawal) तुरंत भेज दी गई!',
-      message: `$${amount.toLocaleString()} transferred to ${details.accountOrId}. Ref: ${refNum}`,
-    });
-
-    try {
-      sounds.playCash();
-      confetti({ particleCount: 70, spread: 80, origin: { y: 0.6 } });
-    } catch {
-      // ignore
-    }
-
-    return { success: true, message: `Withdrawal of $${amount.toLocaleString()} complete!` };
-  };
+    _amount: number,
+    _method: PaymentMethodType,
+    _details: { accountOrId: string; recipientName: string; otpPin: string }
+  ) => ({
+    success: false,
+    message: 'Live withdrawals are disabled: no verified payout provider is connected. No funds were moved.',
+  });
 
   // Modals
   const openBankingModal = (mode: 'deposit' | 'withdraw') => {
@@ -692,15 +581,22 @@ export const EnterpriseProvider: React.FC<{ children: ReactNode }> = ({ children
   };
 
   const toggleAutonomous = () => {
-    setIsAutonomousRunning(prev => {
-      const next = !prev;
+    if (isAutonomousRunning) {
+      setIsAutonomousRunning(false);
       addNotification({
-        type: next ? 'success' : 'warning',
-        title: next ? 'Autonomous Mode Resumed' : 'Autonomous Mode Paused',
-        hindiTitle: next ? 'ऑटोनॉमस मोड चालू' : 'ऑटोनॉमस मोड रोका गया',
-        message: next ? 'AI agents are actively working and generating revenue.' : 'Simulation paused for manual administrative inspection.',
+        type: 'warning',
+        title: 'Autonomous simulation paused',
+        hindiTitle: 'ऑटोनॉमस सिमुलेशन रोक दिया गया',
+        message: 'No real-world jobs, payments, or revenue are processed by this prototype.',
       });
-      return next;
+      return;
+    }
+
+    addNotification({
+      type: 'warning',
+      title: 'Live automation is not configured',
+      hindiTitle: 'लाइव ऑटोमेशन अभी कॉन्फ़िगर नहीं है',
+      message: 'The autonomous loop can create simulated contracts and balances. It stays disabled until a verified backend and real customer/payment integrations are implemented.',
     });
   };
 

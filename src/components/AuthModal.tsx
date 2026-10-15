@@ -71,12 +71,12 @@ export const AuthModal: React.FC = () => {
             </div>
             <div>
               <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <span>{isHindi ? 'रोल-आधारित एक्सेस कंट्रोल (RBAC) व लॉगिन' : 'Role-Based Access Control (RBAC) & Login'}</span>
+                <span>{isHindi ? 'डेमो रोल स्विचर (असली लॉगिन नहीं)' : 'Demo Role Switcher (Not Real Authentication)'}</span>
               </h2>
               <p className="text-xs text-slate-400">
                 {isHindi 
-                  ? 'कंपनी के प्रत्येक विभाग के अनुसार अपनी भूमिका चुनें और उसके अधिकार देखें' 
-                  : 'Select your operational persona to test department-level permissions & security barriers'}
+                  ? 'केवल UI परीक्षण के लिए भूमिका चुनें। कोई असली खाता या सुरक्षा जाँच नहीं होती।' 
+                  : 'Choose a role for UI testing only. This does not authenticate a real account or enforce server-side permissions.'}
               </p>
             </div>
           </div>
@@ -90,6 +90,11 @@ export const AuthModal: React.FC = () => {
 
         {/* Modal Body */}
         <div className="p-6 space-y-6 max-h-[80vh] overflow-y-auto">
+          <div role="alert" className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-3 text-xs leading-relaxed text-amber-100">
+            {isHindi
+              ? 'सावधानी: यह डेमो स्क्रीन है। चुनी गई भूमिका असली पहचान सत्यापित नहीं करती और इसे वास्तविक सुरक्षा नियंत्रण न मानें।'
+              : 'Notice: this is a demo screen. Selecting a role does not verify identity and must not be treated as a real security control.'}
+          </div>
           {/* Quick Select Personas */}
           <div>
             <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">

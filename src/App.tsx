@@ -63,7 +63,18 @@ function EnterpriseContent() {
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
-        {/* Master autonomous control bar at the top */}
+        <section
+          role="status"
+          aria-live="polite"
+          className="rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-100"
+        >
+          <p className="font-bold">Prototype / Simulation Mode — no real money or customers are connected.</p>
+          <p className="mt-1 text-amber-100/80">
+            Login and role switching are demo-only. Banking, revenue, security events, and autonomous activity shown here are sample data, not verified real-world operations.
+          </p>
+        </section>
+
+        {/* Autonomous controls stay paused until real integrations are configured. */}
         <AutonomousControlBar />
 
         {/* Dynamic active view */}
@@ -89,18 +100,10 @@ function EnterpriseContent() {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 text-[11px] text-slate-400">
-            <span className="flex items-center gap-1 text-emerald-400">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>{isHindi ? '256-बिट बैंक-ग्रेड सुरक्षा' : '256-Bit Bank Grade Encryption'}</span>
-            </span>
-            <span>•</span>
-            <span className="flex items-center gap-1 text-cyan-400">
-              <Lock className="w-3.5 h-3.5" />
-              <span>{isHindi ? 'जीरो-ट्रस्ट सेंटिनल शील्ड' : 'Zero-Trust Sentinel Guard'}</span>
-            </span>
-            <span>•</span>
-            <span className="font-mono text-slate-300">SLA: 99.999% High Availability</span>
+          <div className="max-w-xl text-center md:text-right text-[11px] leading-relaxed text-amber-200">
+            {isHindi
+              ? 'प्रोटोटाइप मोड: असली बैंक, भुगतान, लॉगिन, सुरक्षा निगरानी या SLA सेवा जुड़ी नहीं है।'
+              : 'Prototype mode: no real bank, payment processor, authentication, security monitoring, or SLA service is connected.'}
           </div>
         </div>
       </footer>
